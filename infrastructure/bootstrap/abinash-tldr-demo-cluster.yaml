@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-tldr-demo-1
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/abinash2512/PaaCACM/infrastructure.git'
+    targetRevision: HEAD
+    path: clusters/abinash-tldr-demo-1
+  destination:
+    server: 'https://kubernetes.default.svc' # Deploys declarations onto the Hub
+    namespace: ns-rosa-hcp
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    createNamespace: true

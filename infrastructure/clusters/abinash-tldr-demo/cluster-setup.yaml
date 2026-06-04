@@ -1,0 +1,63 @@
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  name: abinash-tldr-rosa-hcp-1
+spec:
+  hubAcceptsClient: true
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: "abinash-tldr-rosa-hcp-1"
+  namespace: "ns-rosa-hcp"
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks: ["192.168.0.0/16"]
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+    kind: ROSACluster
+    name: "abinash-tldr-rosa-hcp-1"
+    namespace: "ns-rosa-hcp"
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+    kind: ROSAControlPlane
+    name: "rosa-cp-1"
+    namespace: "ns-rosa-hcp"
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: ROSACluster
+metadata:
+  name: "abinash-tldr-rosa-hcp-1"
+  namespace: "ns-rosa-hcp"
+spec: {}
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+kind: ROSAControlPlane
+metadata:
+  name: "rosa-cp-1"
+  namespace: "ns-rosa-hcp"
+spec:
+  credentialsSecretRef:
+    name: rosa-creds-secret
+  rosaClusterName: abinash-tldr-rosa-hcp-1
+  domainPrefix: abinash
+  rosaRoleConfigRef:
+    name: role-config
+  version: "4.20.0"
+  ## The region should match the aws region used to create the ROSANetwork
+  region: "eu-west-1"
+  rosaNetworkRef:
+    name: "rosa-vpc"
+  network:
+    machineCIDR: "10.0.0.0/16"
+    podCIDR: "10.128.0.0/14"
+    serviceCIDR: "172.30.0.0/16"
+  defaultMachinePoolSpec:
+    instanceType: "m5.xlarge"
+    autoscaling:
+      maxReplicas: 6
+      minReplicas: 3
+  additionalTags:
+    env: "demo"
+    profile: "hcp"

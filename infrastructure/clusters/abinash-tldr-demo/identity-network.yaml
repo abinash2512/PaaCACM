@@ -1,0 +1,38 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: AWSClusterControllerIdentity
+metadata:
+  name: "default"
+spec:
+  allowedNamespaces: {}  # matches all namespaces
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: ROSARoleConfig
+metadata:
+  name: "role-config"
+  namespace: "ns-rosa-hcp"
+spec:
+  accountRoleConfig:
+    prefix: "rosa"
+    version: "4.20.0"  
+  operatorRoleConfig:
+    prefix: "abinash-tldr"
+  credentialsSecretRef:
+    name: rosa-creds-secret
+  oidcProviderType: Managed
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: ROSANetwork
+metadata:
+  name: "rosa-vpc"
+  namespace: "ns-rosa-hcp"
+spec:
+  region: "eu-west-1"
+  stackName: "rosa-hcp-net"
+  availabilityZones:
+  - "eu-west-1a"
+  - "eu-west-1b"
+  - "eu-west-1c"
+  cidrBlock: 10.0.0.0/16
+  identityRef:
+    kind: AWSClusterControllerIdentity
+    name: default
