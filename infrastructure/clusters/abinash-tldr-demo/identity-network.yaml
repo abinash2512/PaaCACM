@@ -15,7 +15,7 @@ spec:
     prefix: "rosa"
     version: "4.20.0"  
   operatorRoleConfig:
-    prefix: "abinash-tldr"
+    prefix: "ab"
   credentialsSecretRef:
     name: rosa-creds-secret
   oidcProviderType: Managed
